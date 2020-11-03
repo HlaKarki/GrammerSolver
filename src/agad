@@ -1,0 +1,114 @@
+import java.util.*;
+
+public class GrammarSolver {
+    Map<String, List<String>> map = new TreeMap<>();
+
+    public GrammarSolver(List<String> rules) {
+
+        if (rules.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+
+        String nonterminal;
+
+        for(String x: rules){
+
+            //System.out.println(x);
+
+            List<String> terminal = new ArrayList<>();
+
+            Scanner scan1 = new Scanner(x);
+            scan1.useDelimiter("::=");
+
+            nonterminal = scan1.next().trim();
+            String temporaryholder = scan1.next().trim();
+
+            Scanner scan2 = new Scanner(temporaryholder);
+            scan2.useDelimiter("\\|");
+
+            while(scan2.hasNext()){
+                String scanWord = scan2.next().trim();
+
+                    terminal.add(scanWord.trim());
+            }
+            map.put(nonterminal,new ArrayList<String>());
+            map.get(nonterminal).addAll(terminal);
+
+        }
+        System.out.println(map);
+    }
+
+
+    public boolean contains(String symbol){
+        symbol = symbol.trim();
+
+        if(map.containsKey(symbol)){
+            return true;
+        }
+        else
+            return false;
+    }
+
+    public Set<String> getSymbols(){
+        Set<String> sortedSet = new TreeSet<>();
+        for(String x: map.keySet()){
+            sortedSet.add(x);
+        }
+
+        return sortedSet;
+    }
+
+    public String generate(String symbol){
+        //List<String> valueHolder = new ArrayList<>();
+        //valueHolder.addAll(map.get(symbol));
+        String word = "";
+        Random rand = new Random();
+
+        List<String> valuesHolder = new ArrayList<>();
+
+
+        if(!map.containsKey(symbol)){
+            //System.out.println("In not contains "+symbol);
+            return symbol;
+        }
+        else{
+            List<String> tempList = new ArrayList<>();
+            tempList.addAll(map.get(symbol));
+
+            //System.out.println(tempList);
+
+            int randInt = rand.nextInt(tempList.size());
+            String values = tempList.get(randInt);
+
+            Scanner scan4 = new Scanner(values.trim());
+            scan4.useDelimiter(" ");
+
+            while(scan4.hasNext()){
+                String tempWord = scan4.next().trim();
+                int check = 0;
+                //System.out.print(tempWord+",");
+                Scanner scanidk = new Scanner(tempWord);
+                while(scanidk.hasNext()){
+                    check=1;
+                    String yeap = scanidk.next().trim();
+                    valuesHolder.add(yeap);
+                }
+
+                if(!tempWord.isEmpty() && check!=1){
+                    valuesHolder.add(tempWord);
+                }
+
+            }
+
+            for(String x: valuesHolder){
+                word += generate(x) + " ";
+            }
+        }
+
+
+        return word.trim();
+        //return "";
+    }
+}
+
+
